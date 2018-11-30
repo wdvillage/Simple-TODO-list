@@ -1,0 +1,17 @@
+body {
+   background-image: url("../img/background-1685845_1920.jpg");
+   background-color: #fff;
+   font-family: 'Roboto', Arial, sans-serif;
+   font-size: 14px;
+    color: #333;
+}
+.main-title {
+    text-align: center;
+    padding: 25px;
+    font-size: 32px;
+    color:#333;
+    background: #f1f1f1;
+    border-radius: 5px;
+    width: 300px;
+    margin: 10px auto; 
+}
