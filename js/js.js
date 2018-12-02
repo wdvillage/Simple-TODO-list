@@ -36,16 +36,17 @@ $(function () {
     });
 
     //If there is already data in the local storage, then display it
-    var keyArr = [];
-    var itemArr = [];
-    for (var i = 0, len = localStorage.length; i < len; ++i) {
-        keyArr.push(localStorage.key(i));
-        itemArr.push(JSON.parse(localStorage.getItem(localStorage.key(i))));
-        if (itemArr[i].board === 'todos') {
-            $('#todos').prepend("<li id=" + itemArr[i].taskid + " draggable='true' ondragstart='return dragStart(event)'><div class='task'>" + itemArr[i].tasktext + "</div><div class='button-container'><button id='edit'></button><button id='delete'></button></div></li>");
+    if (localStorage.length>0){
+    for (i=0; i<=localStorage.length-1; i++)  
+    {  
+        var key = localStorage.key(i);
+        var item=JSON.parse(localStorage.getItem(key));
+        if (item.board === 'todos') {
+            $('#todos').prepend("<li id=" + item.taskid + " draggable='true' ondragstart='return dragStart(event)'><div class='task'>" + item.tasktext + "</div><div class='button-container'><button id='edit'></button><button id='delete'></button></div></li>");
         } else {
-            $('#completed').prepend("<li id=" + itemArr[i].taskid + " draggable='true' ondragstart='return dragStart(event)'><div class='task'>" + itemArr[i].tasktext + "</div><div class='button-container'><button id='edit'></button><button id='delete'></button></div></li>");
+            $('#completed').prepend("<li id=" + item.taskid + " draggable='true' ondragstart='return dragStart(event)'><div class='task'>" + item.tasktext + "</div><div class='button-container'><button id='edit'></button><button id='delete'></button></div></li>");
         }
+    } 
     }
 
     // Cleaning localStorage 
