@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<!--
+Simple TODO list
+-->
+<html>
+    <head>
+        <title>TODO</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="icon" href="img/favicon.png" sizes="32x32">
+        <!-- Google Fonts -->
+        <link href='https://fonts.googleapis.com/css?family=Roboto:300,700,400' rel='stylesheet' type='text/css'>
+
+        <link rel="stylesheet" type="text/css" href="css/styles.css">
+        <link rel="stylesheet" href="fonts/fontawesome/css/font-awesome.min.css">
+        <script src="js/libs/jquery.js"></script>
+        <script src="js/js.js"></script>
+
+    </head>
+    <body>
+        <div class="main-title">Simple TODO list</div>
+        <div class="main">
+
+            <div id="container-main">
+                <button id="clear" value=""></button>
+                <div class="tasks-list">
+                    <form id="form" action="#" method="POST">
+
+                        <input id="tasktext" name="tasktext" type="text" placeholder="Add new task">
+
+                        <button type="submit" id="add"></button>
+                    </form> 
+                    <div id="message"></div>
+                    <ol id="todos" ondragenter="return dragEnter(event)" ondrop="return dragDrop(event)" ondragover="return dragOver(event)"></ol> 
+
+                </div>
+            </div>
+
+            <div id="container-completed">
+                <div class="subtitle">Completed tasks:</div> 
+                <hr>
+
+                <ol id="completed"  ondragenter="return dragEnter(event)" ondrop="return dragDrop(event)" ondragover="return dragOver(event)"></ol> 
+
+            </div>
+        </div>
+
+    </body>
+</html>
