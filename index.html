@@ -31,7 +31,7 @@ Simple TODO list
                         <button type="submit" id="add"></button>
                     </form> 
                     <div id="message"></div>
-                    <ol id="todos" ondragenter="return dragEnter(event)" ondrop="return dragDrop(event)" ondragover="return dragOver(event)"></ol> 
+                    <ol id="todos" ondragenter="dragEnter(event)" ondragover="dragOver(event)" ondrop="dropped(event)"></ol> 
 
                 </div>
             </div>
@@ -40,7 +40,7 @@ Simple TODO list
                 <div class="subtitle">Completed tasks:</div> 
                 <hr>
 
-                <ol id="completed"  ondragenter="return dragEnter(event)" ondrop="return dragDrop(event)" ondragover="return dragOver(event)"></ol> 
+                <ol id="completed"  ondragenter="dragEnter(event)" ondragover="dragOver(event)" ondrop="dropped(event)"></ol> 
 
             </div>
         </div>
