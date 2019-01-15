@@ -26,7 +26,7 @@ $(function () {
 
         var task = new Object();
         task.todos = false;
-        task.taskid = tasks.length;
+        task.taskid = tasks.length+10;
         task.tasktext = tasktext;
         tasks.push(task);
         localStorage.setItem('simpleTodoList', JSON.stringify(tasks));
@@ -47,7 +47,8 @@ $(function () {
 
     // Cleaning localStorage 
     $('#clear').click(function () {
-        window.localStorage.clear();
+        //window.localStorage.clear();
+        localStorage.removeItem('simpleTodoList');
         location.reload();
         return false;
     });
@@ -58,7 +59,9 @@ $(function () {
         $(this).parent().parent().remove();
         var clickedID = $(this).parent().parent()[0];
         //delete item from localStorage
-        localStorage.removeItem(clickedID.id);
+        var tasks=JSON.parse(localStorage.getItem('simpleTodoList'));
+        tasks.splice(clickedID.id, 1);
+        localStorage.setItem('simpleTodoList', JSON.stringify(tasks));
         return false;
     });
 
