@@ -1,12 +1,11 @@
 /* 
  * TODO
  */
-var stkey = 0;
 var hidediv=null;
 
 //Wait for the DOM to load
 $(function () {
-
+   var tasks=[];
     //Focus in input
     $('#tasktext').focus();
 
@@ -21,32 +20,29 @@ $(function () {
             return false;
         }
 
-        $('#todos').prepend("<li id=" + stkey + " draggable='true' ondragstart='return dragStart(event)'><div class='task'>" + tasktext + "</div><div class='button-container'><button id='edit'></button><button id='delete'></button></div></li>");
+        $('#todos').prepend("<li id=" + tasks.length + " draggable='true' ondragstart='dragStart(event)'><div class='task'>" + tasktext + "</div><div class='button-container'><button id='edit'></button><button id='delete'></button></div></li>");
         //Clear input field 
         $('#form')[0].reset();
 
         var task = new Object();
-        task.board = "todos";
-        task.taskid = stkey;
+        task.todos = false;
+        task.taskid = tasks.length;
         task.tasktext = tasktext;
-
-        localStorage.setItem(stkey, JSON.stringify(task));
-        stkey = stkey + 1;
+        tasks.push(task);
+        localStorage.setItem('simpleTodoList', JSON.stringify(tasks));
         return false;
     });
 
     //If there is already data in the local storage, then display it
-    if (localStorage.length>0){
-    for (i=0; i<=localStorage.length-1; i++)  
-    {  
-        var key = localStorage.key(i);
-        var item=JSON.parse(localStorage.getItem(key));
-        if (item.board === 'todos') {
-            $('#todos').prepend("<li id=" + item.taskid + " draggable='true' ondragstart='return dragStart(event)'><div class='task'>" + item.tasktext + "</div><div class='button-container'><button id='edit'></button><button id='delete'></button></div></li>");
-        } else {
-            $('#completed').prepend("<li id=" + item.taskid + " draggable='true' ondragstart='return dragStart(event)'><div class='task'>" + item.tasktext + "</div><div class='button-container'><button id='edit'></button><button id='delete'></button></div></li>");
-        }
-    } 
+    if (localStorage.getItem('simpleTodoList')){
+        var todoList = JSON.parse(localStorage.getItem('simpleTodoList'));
+        todoList.forEach(function(item, i, todoList) {
+            if (item.todos === false) {
+                $('#todos').prepend("<li id=" + item.taskid + " draggable='true' ondragstart='dragStart(event)'><div class='task'>" + item.tasktext + "</div><div class='button-container'><button id='edit'></button><button id='delete'></button></div></li>");
+            } else {
+                $('#completed').prepend("<li id=" + item.taskid + " draggable='true' ondragstart='dragStart(event)'><div class='task'>" + item.tasktext + "</div><div class='button-container'><button id='edit'></button><button id='delete'></button></div></li>");
+            }
+        });
     }
 
     // Cleaning localStorage 
@@ -88,10 +84,11 @@ $(function () {
 
         var saveTask =  $(event.target).parent().parent();
         var taskId=saveTask.attr( "id" );
-        var task=JSON.parse(localStorage.getItem(taskId));
+        var tasks=JSON.parse(localStorage.getItem('simpleTodoList'));
+        var task=tasks[taskId];
         task.tasktext = newText;
-
-        localStorage.setItem(taskId, JSON.stringify(task)); 
+        tasks[taskId]=task;
+        localStorage.setItem('simpleTodoList', JSON.stringify(tasks));
         
         document.getElementById("edittext").remove();
         hidediv.css("display", "block");
@@ -109,31 +106,35 @@ $(function () {
 });
 
 
-function dragStart(ev) {
-    ev.dataTransfer.effectAllowed = 'move';
-    ev.dataTransfer.setData("Text", ev.target.getAttribute('id'));
-    ev.dataTransfer.setDragImage(ev.target, 0, 0);
+function dragStart(event) {
+    event.dataTransfer.effectAllowed = 'move';
+    event.dataTransfer.setData("Text", event.target.getAttribute('id'));
+    event.dataTransfer.setDragImage(event.target, 0, 0);
     return true;
 }
-function dragEnter(ev) {
+function dragEnter(event) {
     event.preventDefault();
     return true;
 }
-function dragOver(ev) {
+function dragOver(event) {
     event.preventDefault();
 }
-function dragDrop(ev) {
-    var data = ev.dataTransfer.getData("Text");
-    ev.target.appendChild(document.getElementById(data));
-    var task = JSON.parse(localStorage.getItem(data));
-    
-    if (ev.target.getAttribute('id') === "completed") {
-        task.board = "completed";
-    } else {
-        task.board = "todos";
-    }
-    localStorage.setItem(data, JSON.stringify(task));
+function dropped(event) {
+    event.preventDefault();
+    var data = event.dataTransfer.getData("Text");
+    if (event.target.nodeName === "OL" || event.target.nodeName === "ol") {  
+        event.target.appendChild(document.getElementById(data));
+      } 
 
-    ev.stopPropagation();
+    var tasks=JSON.parse(localStorage.getItem('simpleTodoList'));   
+    var task = tasks[data];
+    if (event.target.getAttribute('id') === "completed") {
+        task.todos = true;
+    } else {
+        task.todos = false;
+    }
+    localStorage.setItem('simpleTodoList', JSON.stringify(tasks));
+
+    event.stopPropagation();
     return false;
 }
