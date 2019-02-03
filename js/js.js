@@ -5,12 +5,17 @@ var hidediv=null;
 
 //Wait for the DOM to load
 $(function () {
+
    var tasks=[];
     //Focus in input
     $('#tasktext').focus();
 
+
     //Add new task
     $('#add').click(function () {
+        
+    var key=uniqueId();    
+        
         var tasktext = $('#tasktext').val();
 
         //If the text field is not filled
@@ -20,18 +25,36 @@ $(function () {
             return false;
         }
 
-        $('#todos').prepend("<li id=" + tasks.length + " draggable='true' ondragstart='dragStart(event)'><div class='task'>" + tasktext + "</div><div class='button-container'><button id='edit'></button><button id='delete'></button></div></li>");
+        $('#todos').prepend("<li id=" + key + " draggable='true' ondragstart='dragStart(event)'><div class='task'>" + tasktext + "</div><div class='button-container'><button id='edit'></button><button id='delete'></button></div></li>");
         //Clear input field 
         $('#form')[0].reset();
 
         var task = new Object();
         task.todos = false;
-        task.taskid = tasks.length+10;
+        task.taskid = key;
         task.tasktext = tasktext;
         tasks.push(task);
         localStorage.setItem('simpleTodoList', JSON.stringify(tasks));
         return false;
     });
+       
+       
+    //Generate id    
+    function uniqueId() {
+        // desired length of Id
+        var idStrLen = 32;
+        // always start with a letter -- base 36 makes for a nice shortcut
+        var idStr = (Math.floor((Math.random() * 25)) + 10).toString(36) + "_";
+        // add a timestamp in milliseconds (base 36 again) as the base
+        idStr += (new Date()).getTime().toString(36) + "_";
+        // similar to above, complete the Id using random, alphanumeric characters
+        do {
+            idStr += (Math.floor((Math.random() * 35))).toString(36);
+        } while (idStr.length < idStrLen);
+
+        return (idStr);
+    }
+
 
     //If there is already data in the local storage, then display it
     if (localStorage.getItem('simpleTodoList')){
@@ -45,13 +68,14 @@ $(function () {
         });
     }
 
+
     // Cleaning localStorage 
     $('#clear').click(function () {
-        //window.localStorage.clear();
         localStorage.removeItem('simpleTodoList');
         location.reload();
         return false;
     });
+
 
     //Delete task
     $('.main').on('click', '#delete', function () {
@@ -80,15 +104,21 @@ $(function () {
     return false;
     });
 
+
     // Save changes after edit
     $('#todos').on('click', '#save', function () {
         //Get new text
+        var task;
         var newText=$('#edittext').val();
 
         var saveTask =  $(event.target).parent().parent();
         var taskId=saveTask.attr( "id" );
         var tasks=JSON.parse(localStorage.getItem('simpleTodoList'));
-        var task=tasks[taskId];
+        tasks.forEach(function(item, i, tasks) {
+            if (item.taskid===taskId){
+            task=item;
+          }
+        });    
         task.tasktext = newText;
         tasks[taskId]=task;
         localStorage.setItem('simpleTodoList', JSON.stringify(tasks));
@@ -115,22 +145,32 @@ function dragStart(event) {
     event.dataTransfer.setDragImage(event.target, 0, 0);
     return true;
 }
+
+
 function dragEnter(event) {
     event.preventDefault();
     return true;
 }
+
+
 function dragOver(event) {
     event.preventDefault();
 }
+
+
 function dropped(event) {
     event.preventDefault();
+    var task;
     var data = event.dataTransfer.getData("Text");
     if (event.target.nodeName === "OL" || event.target.nodeName === "ol") {  
         event.target.appendChild(document.getElementById(data));
       } 
-
-    var tasks=JSON.parse(localStorage.getItem('simpleTodoList'));   
-    var task = tasks[data];
+    var tasks=JSON.parse(localStorage.getItem('simpleTodoList')); 
+    tasks.forEach(function(item, i, tasks) {
+      if (item.taskid===data){
+      task=item;
+    }
+    });    
     if (event.target.getAttribute('id') === "completed") {
         task.todos = true;
     } else {
